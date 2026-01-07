@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, status, HTTPException
-from jose import ExpiredSignatureError
 from sqlalchemy import select, delete
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,7 +21,6 @@ SUCCESS_MSG = "If you are registered, you will receive an email with instruction
 
 @router.post("/register/", response_model=UserRead, status_code=status.HTTP_201_CREATED)
 async def register_user(user_data: UserCredentialsSchema, db: AsyncSession = Depends(get_db)):
-
     exists = await db.scalar(select(UserModel.id).where(UserModel.email == user_data.email.lower()))
     if exists is not None:
         raise HTTPException(
@@ -104,7 +102,7 @@ async def password_reset_request(user_data: UserBase, db: AsyncSession = Depends
 
 
 @router.post("/reset-password/complete/", status_code=status.HTTP_200_OK)
-async def password_reset_complete(user_data:UserResetPasswordSchema, db: AsyncSession = Depends(get_db)):
+async def password_reset_complete(user_data: UserResetPasswordSchema, db: AsyncSession = Depends(get_db)):
     try:
         user = await db.scalar(select(UserModel).where(UserModel.email == user_data.email.lower()))
         if user is None or not user.is_active:
@@ -166,7 +164,8 @@ async def login(
 
 
 @router.post("/refresh/", status_code=status.HTTP_200_OK)
-async def refresh_access_token(body: AccessTokenRefreshSchema, db: AsyncSession = Depends(get_db), jwt_manager=Depends(get_jwt_auth_manager)):
+async def refresh_access_token(body: AccessTokenRefreshSchema, db: AsyncSession = Depends(get_db),
+                               jwt_manager=Depends(get_jwt_auth_manager)):
     try:
         payload = jwt_manager.decode_refresh_token(body.refresh_token)
     except TokenExpiredError:
