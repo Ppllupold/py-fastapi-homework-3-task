@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from config import get_settings
+from src.config.dependencies import get_settings
 
 settings = get_settings()
 
@@ -36,7 +36,6 @@ async def get_postgresql_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncPostgresqlSessionLocal() as session:
         yield session
 
-
 @asynccontextmanager
 async def get_postgresql_db_contextmanager() -> AsyncGenerator[AsyncSession, None]:
     """
@@ -48,4 +47,4 @@ async def get_postgresql_db_contextmanager() -> AsyncGenerator[AsyncSession, Non
     :return: An asynchronous generator yielding an AsyncSession instance.
     """
     async with AsyncPostgresqlSessionLocal() as session:
-        yield session
+            yield session

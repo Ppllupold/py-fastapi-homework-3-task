@@ -4,8 +4,8 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from config import get_settings
-from database import Base
+from src.config.dependencies import get_settings
+from src.database import Base
 
 settings = get_settings()
 
@@ -43,7 +43,6 @@ async def get_sqlite_db_contextmanager() -> AsyncGenerator[AsyncSession, None]:
     """
     async with AsyncSQLiteSessionLocal() as session:
         yield session
-
 
 async def reset_sqlite_database() -> None:
     """
